@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">JogTracker</string>
+    <string name="uuidlogin">uuidLogin</string>
+    <string name="uuid">uuid</string>
+    <string name="login">login</string>
+    <string name="date">Date</string>
+    <string name="time">Time(s)</string>
+    <string name="distance">Distance(m)</string>
+    <string name="submit">Submit</string>
+    <string name="no_internet_connection">no internet connection</string>
+    <string name="hello">hello</string>
+</resources>

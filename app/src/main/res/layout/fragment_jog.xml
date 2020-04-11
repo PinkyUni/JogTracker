@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorWhite"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp">
+
+        <TextView
+            style="@style/TextTitle"
+            android:layout_height="wrap_content"
+            android:labelFor="@id/etDate"
+            android:text="@string/date" />
+
+        <EditText
+            android:id="@+id/etDate"
+            style="@style/EditTitle"
+            android:layout_height="wrap_content"
+            android:inputType="date"
+            tools:text="flkng" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp">
+
+        <TextView
+            style="@style/TextTitle"
+            android:layout_height="wrap_content"
+            android:labelFor="@id/etTime"
+            android:text="@string/time" />
+
+        <EditText
+            android:id="@+id/etTime"
+            style="@style/EditTitle"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            tools:text="flkng" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp">
+
+        <TextView
+            style="@style/TextTitle"
+            android:layout_height="wrap_content"
+            android:labelFor="@id/etDistance"
+            android:text="@string/distance" />
+
+        <EditText
+            android:id="@+id/etDistance"
+            style="@style/EditTitle"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            tools:text="flkng" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnSubmit"
+        android:layout_gravity="center"
+        android:text="@string/submit"
+        style="@style/AccentButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+</LinearLayout>
