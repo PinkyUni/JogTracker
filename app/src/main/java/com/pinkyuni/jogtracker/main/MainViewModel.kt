@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.pinkyuni.jogtracker.data.JogRepository
+import com.pinkyuni.jogtracker.data.entities.Feedback
 import com.pinkyuni.jogtracker.data.entities.Jog
 import com.pinkyuni.jogtracker.data.entities.JogUpdate
 import kotlinx.coroutines.CoroutineScope
@@ -21,6 +22,7 @@ class MainViewModel(application: Application, private val repository: JogReposit
     private val scope = CoroutineScope(coroutineContext)
     var jogList = MutableLiveData<List<Jog>>()
     var added = MutableLiveData<Boolean>()
+    var status = MutableLiveData<Boolean>()
 
     private fun getUser() {
         scope.launch {
@@ -54,6 +56,14 @@ class MainViewModel(application: Application, private val repository: JogReposit
                     added.postValue(true)
                 }
             }
+        }
+    }
+
+    fun sendFeedback(topic: Int, text: String) {
+        scope.launch {
+            val res: String? = repository.sendFeedback(Feedback(topic, text))
+            val b = res?.equals("ok", true)
+            status.postValue(b)
         }
     }
 

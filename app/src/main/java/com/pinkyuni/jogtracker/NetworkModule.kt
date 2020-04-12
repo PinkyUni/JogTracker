@@ -10,6 +10,7 @@ import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
 import org.kodein.di.generic.singleton
+import org.kodein.di.generic.with
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.reflect.Type
@@ -17,10 +18,17 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 val networkModule = Kodein.Module("networkModule") {
+    constant(tag = "base_url") with "https://jogtracker.herokuapp.com/api/v1/"
     bind<Gson>() with singleton { provideGson() }
     bind<Interceptor>() with singleton { provideInterceptor() }
     bind<OkHttpClient>() with singleton { provideOkHttpClient(instance()) }
-    bind<Retrofit>() with singleton { provideRetrofit(instance(), instance()) }
+    bind<Retrofit>() with singleton {
+        provideRetrofit(
+            instance(),
+            instance(),
+            instance(tag = "base_url")
+        )
+    }
     bind<APIService>() with singleton { instance<Retrofit>().create(APIService::class.java) }
     bind<ConnectionStateMonitor>() with singleton { ConnectionStateMonitor(instance<Application>()) }
 }
@@ -55,14 +63,16 @@ private fun provideGson() = GsonBuilder()
             return sdf.parse(json.asJsonPrimitive.asString) ?: Date()
         }
     })
+    .setLenient()
     .create()
 
 private fun provideRetrofit(
     okHttpClient: OkHttpClient,
-    gson: Gson
+    gson: Gson,
+    baseUrl: String
 ): Retrofit {
     return Retrofit.Builder()
-        .baseUrl("https://jogtracker.herokuapp.com/api/v1/")
+        .baseUrl(baseUrl)
         .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create(gson))
         .addCallAdapterFactory(CoroutineCallAdapterFactory())

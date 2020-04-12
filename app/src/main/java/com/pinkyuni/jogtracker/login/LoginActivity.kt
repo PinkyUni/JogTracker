@@ -28,7 +28,7 @@ class LoginActivity : AppCompatActivity(), KodeinAware {
         }
         viewModel.accessToken.observe(this, Observer {
             when (it) {
-                false -> Toast.makeText(this, "Incorrect uuid", Toast.LENGTH_SHORT).show()
+                false -> Toast.makeText(this, getString(R.string.error_incorrect_uuid), Toast.LENGTH_SHORT).show()
                 true -> {
                     startActivity(Intent(this, MainActivity::class.java))
                     finish()

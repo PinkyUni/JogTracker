@@ -22,4 +22,7 @@ interface APIService {
     @POST("data/jog")
     fun addJog(@Query("access_token") accessToken: String, @Body jog: JogUpdate): Deferred<Response<JogUpdate>>
 
+    @POST("feedback/send")
+    fun sendFeedback(@Query("access_token") accessToken: String, @Body feedback: Feedback): Deferred<Response<String>>
+
 }

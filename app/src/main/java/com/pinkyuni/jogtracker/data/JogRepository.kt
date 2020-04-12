@@ -55,4 +55,11 @@ class JogRepository(application: Application, private val apiService: APIService
         return null
     }
 
+    suspend fun sendFeedback(feedback: Feedback): String? {
+        accessToken?.let {
+            return apiService.sendFeedback(it, feedback).await().body()
+        }
+        return null
+    }
+
 }

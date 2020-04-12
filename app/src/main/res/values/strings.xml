@@ -9,4 +9,18 @@
     <string name="submit">Submit</string>
     <string name="no_internet_connection">no internet connection</string>
     <string name="hello">hello</string>
+    <string name="send_feedback">Send feedback</string>
+    <string name="navigation_drawer_open">open</string>
+    <string name="navigation_drawer_close">close</string>
+    <string name="cancel">Cancel</string>
+    <string name="send">Send</string>
+    <string name="topic_id">Topic id</string>
+    <string name="text">Text</string>
+    <string name="error_fill_all_fields">Fill all fields</string>
+    <string name="error_invalid_topic_id">Invalid topic id</string>
+    <string name="error_incorrect_uuid">Incorrect uuid</string>
+    <string name="error_occurred">Error occurred :c</string>
+    <string name="msg_jog_successfully_added">Jog record added successfully</string>
+    <string name="error_check_internet_connection">Check your Internet connection</string>
+    <string name="msg_feedback_sent">Feedback sent</string>
 </resources>

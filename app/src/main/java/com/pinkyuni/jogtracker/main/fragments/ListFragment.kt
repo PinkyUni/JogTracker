@@ -1,7 +1,5 @@
 package com.pinkyuni.jogtracker.main.fragments
 
-import android.content.Context
-import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,7 +15,6 @@ import com.pinkyuni.jogtracker.main.MainActivity
 import com.pinkyuni.jogtracker.main.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_list.*
-
 
 class ListFragment : Fragment() {
 
@@ -53,10 +50,10 @@ class ListFragment : Fragment() {
 
         fabAddJog.isEnabled = false
         viewModel.jogList.observe(activity as MainActivity, Observer {
-            pbLoading.visibility = View.VISIBLE
+            pbLoading?.visibility = View.VISIBLE
             adapter.setData(it)
-            fabAddJog.isEnabled = true
-            pbLoading.visibility = View.INVISIBLE
+            fabAddJog?.isEnabled = true
+            pbLoading?.visibility = View.INVISIBLE
         })
 
 
@@ -70,14 +67,12 @@ class ListFragment : Fragment() {
 
         viewModel.added.observeForever {
             if (true == it) {
-                Toast.makeText(activity, "Jog record added successfully", Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, getString(R.string.msg_jog_successfully_added), Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(activity, "Error occurred :c", Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, getString(R.string.error_occurred), Toast.LENGTH_SHORT).show()
             }
         }
 
     }
-
-
 
 }

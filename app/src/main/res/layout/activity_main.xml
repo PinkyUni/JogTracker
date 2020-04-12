@@ -1,20 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/flContainer"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/dlMenu"
+    android:background="@color/colorWhite"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:contentDescription="@string/no_internet_connection"
-        android:id="@+id/ivNoConnection"
+    <FrameLayout
+        android:id="@+id/flContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/ivNoConnection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:contentDescription="@string/no_internet_connection"
+            android:padding="40dp"
+            android:src="@drawable/no_internet"
+            android:visibility="gone" />
+
+    </FrameLayout>
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nvMenu"
+        app:menu="@menu/nav_menu"
+        app:headerLayout="@layout/nav_header"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:padding="40dp"
-        android:src="@drawable/no_internet"
-        android:visibility="gone" />
+        android:layout_height="match_parent"
+        android:layout_gravity="start" />
 
-</FrameLayout>
-
+</androidx.drawerlayout.widget.DrawerLayout>
