@@ -27,6 +27,7 @@
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nvMenu"
+        app:itemTextColor="@color/colorPrimaryDark"
         app:menu="@menu/nav_menu"
         app:headerLayout="@layout/nav_header"
         android:layout_width="wrap_content"
