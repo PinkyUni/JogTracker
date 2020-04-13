@@ -1,6 +1,5 @@
 package com.pinkyuni.jogtracker.main
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,29 +11,37 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class JogAdapter(
-    private val context: Context,
-    private var list: List<Jog>?,
     private val clickListener: (Jog) -> Unit
 ) : RecyclerView.Adapter<ViewHolder>() {
+
+    private var list = mutableListOf<Jog>()
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
             LayoutInflater.from(
-                context
+                parent.context
             ).inflate(R.layout.jog_item, parent, false)
         )
     }
 
     override fun getItemCount(): Int {
-        return list?.size ?: 0
+        return list.size
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        list?.get(position)?.let { holder.bind(it, clickListener) }
+        list[position].let { holder.bind(it, clickListener) }
     }
 
-    internal fun setData(items: List<Jog>?) {
-        this.list = items
-        notifyDataSetChanged()
+    internal fun setItems(items: List<Jog>?) {
+        items?.let {
+            list.clear()
+            list.addAll(items)
+            notifyDataSetChanged()
+        }
+    }
+
+    override fun getItemId(position: Int): Long {
+        return list[position].id
     }
 }
 

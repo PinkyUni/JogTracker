@@ -20,6 +20,7 @@ import org.kodein.di.generic.instance
 
 class MainActivity : AppCompatActivity(), KodeinAware {
 
+    private val tag = "feedbackDialog"
     override val kodein by closestKodein()
     private val viewModelFactory: App.MainViewModelFactory by instance()
     private val hasConnection: ConnectionStateMonitor by instance()
@@ -43,8 +44,13 @@ class MainActivity : AppCompatActivity(), KodeinAware {
         supportActionBar?.setHomeButtonEnabled(true)
         nvMenu.setNavigationItemSelectedListener {
             if (it.itemId == R.id.miSendFeedback) {
-                val dialogFragment by instance<DialogFragment>()
-                dialogFragment.show(supportFragmentManager, "feedbackDialog")
+                val dialogFragment =
+                    supportFragmentManager.findFragmentByTag(tag) as DialogFragment?
+                if (dialogFragment == null) {
+                    val fragment by instance<DialogFragment>()
+                    fragment.tag
+                    fragment.show(supportFragmentManager, tag)
+                }
             }
             return@setNavigationItemSelectedListener true
         }
@@ -63,16 +69,28 @@ class MainActivity : AppCompatActivity(), KodeinAware {
                     viewModel.getUserInfo()
                 }
                 false -> {
-                    Toast.makeText(this, getString(R.string.error_check_internet_connection), Toast.LENGTH_SHORT)
+                    Toast.makeText(
+                        this,
+                        getString(R.string.error_check_internet_connection),
+                        Toast.LENGTH_SHORT
+                    )
                         .show()
                     ivNoConnection.visibility = View.VISIBLE
                 }
             }
         })
-        viewModel.status.observe(this, Observer {
-            when(it) {
-                true -> Toast.makeText(this, getString(R.string.msg_feedback_sent), Toast.LENGTH_SHORT).show()
-                false -> Toast.makeText(this, getString(R.string.error_occurred), Toast.LENGTH_SHORT).show()
+        viewModel.feedbackStatus.observe(this, Observer {
+            when (it) {
+                true -> Toast.makeText(
+                    this,
+                    getString(R.string.msg_feedback_sent),
+                    Toast.LENGTH_SHORT
+                ).show()
+                false -> Toast.makeText(
+                    this,
+                    getString(R.string.error_occurred),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         })
     }

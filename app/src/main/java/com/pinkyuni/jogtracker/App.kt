@@ -1,7 +1,6 @@
 package com.pinkyuni.jogtracker
 
 import android.app.Application
-import android.content.Context
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -27,12 +26,6 @@ class App : Application(), KodeinAware {
             )
         }
         bind<DialogFragment>() with provider { FeedbackDialogFragment() }
-    }
-
-    companion object {
-        operator fun get(context: Context): App {
-            return context.applicationContext as App
-        }
     }
 
     @Suppress("UNCHECKED_CAST")

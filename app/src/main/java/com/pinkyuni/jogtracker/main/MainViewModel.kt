@@ -2,30 +2,29 @@ package com.pinkyuni.jogtracker.main
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import com.hadilq.liveevent.LiveEvent
 import com.pinkyuni.jogtracker.data.JogRepository
 import com.pinkyuni.jogtracker.data.entities.Feedback
 import com.pinkyuni.jogtracker.data.entities.Jog
 import com.pinkyuni.jogtracker.data.entities.JogUpdate
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlin.coroutines.CoroutineContext
 
 class MainViewModel(application: Application, private val repository: JogRepository) :
     AndroidViewModel(application) {
 
-    private val parentJob = Job()
-    private val coroutineContext: CoroutineContext
-        get() = parentJob + Dispatchers.Default
-    private val scope = CoroutineScope(coroutineContext)
     var jogList = MutableLiveData<List<Jog>>()
-    var added = MutableLiveData<Boolean>()
-    var status = MutableLiveData<Boolean>()
+    private val _added = LiveEvent<Boolean>()
+    val added: LiveData<Boolean> = _added
+    private val _feedbackStatus = LiveEvent<Boolean>()
+    val feedbackStatus: LiveData<Boolean> = _feedbackStatus
+    private val _isLoadingVisible = MutableLiveData<Boolean>()
+    val isLoadingVisible: LiveData<Boolean> = _isLoadingVisible
 
     private fun getUser() {
-        scope.launch {
+        viewModelScope.launch {
             repository.getCurrentUser()
         }
     }
@@ -36,34 +35,36 @@ class MainViewModel(application: Application, private val repository: JogReposit
     }
 
     private fun getJogList() {
-        scope.launch {
+        _isLoadingVisible.value = true
+        viewModelScope.launch {
             val list = repository.getJogList()
             jogList.postValue(list)
+            _isLoadingVisible.postValue(false)
         }
     }
 
     fun updateJog(jog: JogUpdate) {
-        scope.launch {
+        viewModelScope.launch {
             repository.updateJog(jog)
         }
     }
 
     fun addJog(jog: JogUpdate) {
-        scope.launch {
+        viewModelScope.launch {
             val addedJog = repository.addJog(jog)
             addedJog?.let {
                 if (addedJog.updatedAt != null) {
-                    added.postValue(true)
+                    _added.postValue(true)
                 }
             }
         }
     }
 
     fun sendFeedback(topic: Int, text: String) {
-        scope.launch {
+        viewModelScope.launch {
             val res: String? = repository.sendFeedback(Feedback(topic, text))
             val b = res?.equals("ok", true)
-            status.postValue(b)
+            _feedbackStatus.postValue(b)
         }
     }
 

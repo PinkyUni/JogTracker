@@ -7,9 +7,9 @@ import java.util.*
 
 data class JogUpdate(
     @SerializedName("jog_id")
-    var jogId: BigInteger,
+    var jogId: Long,
     @SerializedName("user_id")
-    var userId: BigInteger,
+    var userId: Long,
     var date: Date,
     var time: Int,
     var distance: Float,

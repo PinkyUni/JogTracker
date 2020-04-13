@@ -5,7 +5,7 @@ import java.io.Serializable
 
 data class LoggedIn(
     @SerializedName("access_token")
-    var accessToken: String,
+    var accessToken: String?,
     @SerializedName("token_type")
     var tokenType: String,
     @SerializedName("expires_in")

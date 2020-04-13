@@ -3,63 +3,55 @@ package com.pinkyuni.jogtracker.data
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.LiveData
+import com.hadilq.liveevent.LiveEvent
 import com.pinkyuni.jogtracker.data.entities.*
+import retrofit2.HttpException
 
 class JogRepository(application: Application, private val apiService: APIService) {
 
-    private val sharedPreferencesKey = "com.pinkyuni.jogtracker.prefs"
-    private val sharedPreferences: SharedPreferences =
-        application.getSharedPreferences(sharedPreferencesKey, Context.MODE_PRIVATE)
     private var accessToken: String? = null
-    val isLoggedIn = MutableLiveData<Boolean>()
+    private val _isLoggedIn = LiveEvent<Boolean>()
+    val isLoggedIn: LiveData<Boolean> = _isLoggedIn
 
     init {
+        val sharedPreferencesKey = "com.pinkyuni.jogtracker.prefs"
+        val sharedPreferences: SharedPreferences =
+            application.getSharedPreferences(sharedPreferencesKey, Context.MODE_PRIVATE)
         accessToken = sharedPreferences.getString("access_token", null)
-        isLoggedIn.postValue(accessToken != null)
+        if (accessToken != null)
+            _isLoggedIn.postValue(true)
     }
 
     suspend fun uuidLogin(uuid: String): LoggedIn? {
-        val loggedIn = apiService.uuidLogin(UuidLogin(uuid)).await().body()
-        accessToken = loggedIn?.accessToken
-        isLoggedIn.postValue(accessToken != null)
-        sharedPreferences.edit().putString("access_token", accessToken).apply()
+        var loggedIn: LoggedIn? = null
+        try {
+            loggedIn = apiService.uuidLogin(uuid)
+        } catch (e: HttpException) {
+            _isLoggedIn.postValue(false)
+        }
+        _isLoggedIn.postValue(loggedIn != null)
         return loggedIn
     }
 
     suspend fun getCurrentUser(): User? {
-        accessToken?.let {
-            return apiService.getCurrentUser(it).await().body()
-        }
-        return null
+        return apiService.getCurrentUser()
     }
 
     suspend fun getJogList(): List<Jog>? {
-        accessToken?.let {
-            return apiService.getJogList(it).await().body()?.jogs
-        }
-        return null
+        return apiService.getJogList().jogs
     }
 
     suspend fun updateJog(jog: JogUpdate): JogUpdate? {
-        accessToken?.let {
-            return apiService.updateJog(it, jog).await().body()
-        }
-        return null
+        return apiService.updateJog(jog)
     }
 
     suspend fun addJog(jog: JogUpdate): JogUpdate? {
-        accessToken?.let {
-            return apiService.addJog(it, jog).await().body()
-        }
-        return null
+        return apiService.addJog(jog)
     }
 
     suspend fun sendFeedback(feedback: Feedback): String? {
-        accessToken?.let {
-            return apiService.sendFeedback(it, feedback).await().body()
-        }
-        return null
+        return apiService.sendFeedback(feedback)
     }
 
 }

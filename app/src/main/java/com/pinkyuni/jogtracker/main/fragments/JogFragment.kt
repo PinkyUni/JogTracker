@@ -14,18 +14,32 @@ import com.pinkyuni.jogtracker.main.MainActivity
 import com.pinkyuni.jogtracker.main.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_jog.*
-import java.math.BigInteger
+import java.lang.NumberFormatException
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
-class JogFragment(private val jog: Jog?) : Fragment() {
+class JogFragment : Fragment() {
 
     private val sdf = SimpleDateFormat("dd.MM.yyyy", Locale.US)
-
     private val viewModel by lazy {
         ViewModelProviders.of(activity as MainActivity).get(
-            MainViewModel::class.java)
+            MainViewModel::class.java
+        )
+    }
+
+    companion object {
+
+        private const val argumentsJogKey = "jog"
+
+        fun newInstance(jog: Jog?): JogFragment {
+            val bundle = Bundle()
+            bundle.putSerializable(argumentsJogKey, jog)
+            val fragment = JogFragment()
+            fragment.arguments = bundle
+            return fragment
+        }
+
     }
 
     override fun onCreateView(
@@ -36,8 +50,9 @@ class JogFragment(private val jog: Jog?) : Fragment() {
         return inflater.inflate(R.layout.fragment_jog, flContainer, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val jog = arguments?.getSerializable(argumentsJogKey) as Jog?
         if (jog != null) {
             val d = sdf.format(Date(jog.date))
             etDate.setText(d)
@@ -46,19 +61,34 @@ class JogFragment(private val jog: Jog?) : Fragment() {
             etDistance.setText(jog.distance.toString())
 
             btnSubmit.setOnClickListener {
-                jog.date = sdf.parse(etDate.text.toString())?.time ?: Date().time
-                jog.time = etTime.text.toString().toInt()
-                jog.distance = etDistance.text.toString().toFloat()
-                viewModel.updateJog(JogUpdate(jog))
-                (activity as MainActivity).supportFragmentManager.popBackStack()
+                try {
+                    jog.date = sdf.parse(etDate.text.toString())?.time ?: Date().time
+                    jog.time = etTime.text.toString().toInt()
+                    jog.distance = etDistance.text.toString().toFloat()
+                    viewModel.updateJog(JogUpdate(jog))
+                    (activity as MainActivity).supportFragmentManager.popBackStack()
+                } catch (e: ParseException) {
+                    Toast.makeText(
+                        activity,
+                        "Enter date as '${sdf.toPattern()}'",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    etDate.requestFocus()
+                } catch (e: NumberFormatException) {
+                    Toast.makeText(
+                        activity,
+                        "Incorrect time or distance value",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
         } else {
             btnSubmit.setOnClickListener {
                 try {
                     val parsed = sdf.parse(etDate.text.toString())
                     val j = Jog(
-                        BigInteger("1"),
-                        BigInteger("1"),
+                        1,
+                        1,
                         parsed!!.time,
                         etTime.text.toString().toInt(),
                         etDistance.text.toString().toFloat()
@@ -66,8 +96,18 @@ class JogFragment(private val jog: Jog?) : Fragment() {
                     viewModel.addJog(JogUpdate(j))
                     (activity as MainActivity).supportFragmentManager.popBackStack()
                 } catch (e: ParseException) {
-                    Toast.makeText(activity, "Enter date as '${sdf.toPattern()}'", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        activity,
+                        "Enter date as '${sdf.toPattern()}'",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     etDate.requestFocus()
+                } catch (e: NumberFormatException) {
+                    Toast.makeText(
+                        activity,
+                        "Incorrect time or distance value",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }

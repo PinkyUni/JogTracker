@@ -23,7 +23,9 @@ class ConnectionStateMonitor(context: Context) : LiveData<Boolean>() {
 
     override fun onInactive() {
         super.onInactive()
-        connectivityManager.unregisterNetworkCallback(connectivityManagerCallback)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            connectivityManager.unregisterNetworkCallback(connectivityManagerCallback)
+        }
     }
 
     private fun getConnectivityManagerCallback(): ConnectivityManager.NetworkCallback {

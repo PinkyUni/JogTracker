@@ -26,7 +26,7 @@ class LoginActivity : AppCompatActivity(), KodeinAware {
         val viewModel by lazy {
             ViewModelProviders.of(this, viewModelFactory).get(LoginViewModel::class.java)
         }
-        viewModel.accessToken.observe(this, Observer {
+        viewModel.isLoggedIn.observe(this, Observer {
             when (it) {
                 false -> Toast.makeText(this, getString(R.string.error_incorrect_uuid), Toast.LENGTH_SHORT).show()
                 true -> {

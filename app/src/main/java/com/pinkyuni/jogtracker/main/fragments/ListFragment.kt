@@ -15,6 +15,7 @@ import com.pinkyuni.jogtracker.main.MainActivity
 import com.pinkyuni.jogtracker.main.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_list.*
+import kotlinx.android.synthetic.main.fragment_list.view.*
 
 class ListFragment : Fragment() {
 
@@ -29,49 +30,53 @@ class ListFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_list, flContainer, false)
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        val adapter = JogAdapter(
-            activity as MainActivity,
-            listOf()
-        ) {
+        val view = inflater.inflate(R.layout.fragment_list, flContainer, false)
+        view.fabAddJog.setOnClickListener {
             (activity as MainActivity).supportFragmentManager.beginTransaction()
                 .replace(
                     R.id.flContainer,
-                    JogFragment(it)
+                    JogFragment.newInstance(null)
                 ).addToBackStack(null).commit()
         }
+        return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val adapter = JogAdapter {
+            (activity as MainActivity).supportFragmentManager.beginTransaction()
+                .replace(
+                    R.id.flContainer,
+                    JogFragment.newInstance(it)
+                ).addToBackStack(null).commit()
+        }
+        adapter.setHasStableIds(true)
         rvJogs.layoutManager = LinearLayoutManager(activity)
         rvJogs.adapter = adapter
 
-        fabAddJog.isEnabled = false
-        viewModel.jogList.observe(activity as MainActivity, Observer {
-            pbLoading?.visibility = View.VISIBLE
-            adapter.setData(it)
-            fabAddJog?.isEnabled = true
-            pbLoading?.visibility = View.INVISIBLE
+        viewModel.isLoadingVisible.observe(viewLifecycleOwner, Observer {
+            when (it) {
+                true -> pbLoading?.visibility = View.VISIBLE
+                false -> {
+                    pbLoading?.visibility = View.INVISIBLE
+                    adapter.setItems(viewModel.jogList.value)
+                }
+            }
         })
 
-
-        fabAddJog.setOnClickListener {
-            (activity as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(
-                    R.id.flContainer,
-                    JogFragment(null)
-                ).addToBackStack(null).commit()
-        }
-
-        viewModel.added.observeForever {
+        viewModel.added.observe(viewLifecycleOwner, Observer {
             if (true == it) {
-                Toast.makeText(activity, getString(R.string.msg_jog_successfully_added), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    activity,
+                    getString(R.string.msg_jog_successfully_added),
+                    Toast.LENGTH_SHORT
+                ).show()
             } else {
-                Toast.makeText(activity, getString(R.string.error_occurred), Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, getString(R.string.error_occurred), Toast.LENGTH_SHORT)
+                    .show()
             }
-        }
+        })
 
     }
 
